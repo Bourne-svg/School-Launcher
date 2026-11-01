@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "申请书架 · 院校自动填入",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "连接本机院校登录助手，在指定申请网站填入登录资料，由你确认登录。",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqIhFkrh7I8vwIGSuo0Z5uXAeREKNVY7UGFSXMrYAFaE1R1+4g+2AKyJuf6/M3+GQvIT53SuGbYnNXJwYaHlbeJt1ZTtQ96phNk96A2yuTn+KO/2iMmQL5VnzZ29Z+51YEtipwOymENzk/qhiPy6VAXragakQYSDZjBuluCmMiH0pPQT4qb+87xO1+7ExeX8N1pSoUkH36EuJ77/uyXwzUpm9ft4/3ZPyGFy+R6W2+nQQREgmoAIUU5HavfZsngB4Y0VBLcE6n594ZBDcIkyMY+vURcDNEgx8qIQQ48yY4KFmCxwkdrjE3OJaZoDlBb85k2fYLTJV78BGkOtU3W4MwQIDAQAB",
   "permissions": [

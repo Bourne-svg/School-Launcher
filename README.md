@@ -2,9 +2,9 @@
 
 Windows 院校申请入口管理工具：自由编辑网址和账号资料、本地加密保存、Chrome 辅助填入。
 
-**[下载 Windows x64 便携版 ZIP](https://github.com/Bourne-svg/School-Launcher/releases/download/v0.0.3/SchoolLauncher-0.0.3.zip)** · [版本与校验文件](https://github.com/Bourne-svg/School-Launcher/releases/latest)
+**[下载 Windows x64 便携版 ZIP](https://github.com/Bourne-svg/School-Launcher/releases/download/v0.0.4/SchoolLauncher-0.0.4.zip)** · [版本与校验文件](https://github.com/Bourne-svg/School-Launcher/releases/latest)
 
-当前版本：**0.0.3**。
+当前版本：**0.0.4**。
 
 ## 开始使用
 
@@ -27,7 +27,7 @@ Windows 院校申请入口管理工具：自由编辑网址和账号资料、本
 
 ## 构建与测试
 
-使用 Windows x64、Python 3.11，安装 `requirements-lock.txt`，在干净源码目录执行 `./build.ps1 -Python python`。输出包含桌面程序及独立 Native Messaging 主机。`tools/package_release.py` 从明确的源码清单建立干净构建目录、运行构建并生成 ZIP 与 SHA-256 文件。
+使用 Windows x64、Python 3.11，安装 `requirements-lock.txt`，在干净源码目录执行 `./build.ps1 -Python python`。输出包含桌面程序及独立 Native Messaging 主机。`tools/package_release.py` 直接从当前源码仓库构建，只将编译产物写入构建目录，并生成 ZIP 与 SHA-256 文件。
 
 ```powershell
 python -m pytest tests/test_core.py tests/test_autofill.py tests/test_portable.py -q
@@ -35,7 +35,7 @@ python tests/check_content.py
 node tests/test_worker.mjs
 python tests/check_ui.py
 python tests/check_native.py
-python tools/package_release.py --work-dir C:/SchoolLauncher-build --output-dir C:/SchoolLauncher/0.0.3 --python python
+python tools/package_release.py --work-dir C:/SchoolLauncher-build --output-dir C:/SchoolLauncher/0.0.4 --python python
 ```
 
 测试使用虚构凭据；本机原生 UI 测试会显示独立测试窗口，不连接正式账号库。测试证据及未验证范围见 [验收记录](验收记录.md)。

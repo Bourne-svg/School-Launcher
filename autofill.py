@@ -149,7 +149,7 @@ class Tasks:
             if op == 'hello':
                 if self.connection_check and secrets.compare_digest(str(message.get('check', '')), self.connection_check):
                     self.connection_verified = True
-                return dict(ok=True,version='0.0.3')
+                return dict(ok=True,version='0.0.4')
             token = message.get('task')
             job = self.jobs.get(token)
             if not job or job['status'] in ('filled','failed','expired'):
