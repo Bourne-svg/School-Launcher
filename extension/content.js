@@ -6,7 +6,32 @@
  const visible=e=>e.isConnected&&!e.disabled&&!e.readOnly&&e.type!=='hidden'&&e.getClientRects().length>0&&getComputedStyle(e).visibility!=='hidden'&&getComputedStyle(e).display!=='none';
  const send=async msg=>{try{return await chrome.runtime.sendMessage(msg);}catch{return {ok:false,inactive:true};}};
  const notice=text=>{const box=document.createElement('div');box.textContent='申请书架 · '+text;Object.assign(box.style,{position:'fixed',right:'20px',top:'20px',zIndex:'2147483647',padding:'13px 18px',background:'#213b4c',color:'#fff',font:'13px Microsoft YaHei,sans-serif',borderRadius:'8px',boxShadow:'0 4px 20px #0003',maxWidth:'320px',lineHeight:'1.6'});document.documentElement.append(box);setTimeout(()=>box.remove(),6500);};
- function locate(rule){const found={};for(const [key,selector] of Object.entries(rule.fields)){const elements=[...document.querySelectorAll(selector)].filter(visible);if(elements.length>1)return {code:'ambiguous'};if(elements.length!==1)return {code:'waiting'};found[key]=elements[0];}return {elements:found};}
+ function locateGeneric(rule){
+   const inputs=[...document.querySelectorAll('input')].filter(visible);
+   const text=e=>[e.name,e.id,e.placeholder,e.getAttribute('aria-label'),...[...(e.labels||[])].map(l=>l.textContent)].join(' ');
+   const textual=e=>['text','email','tel'].includes(e.type);
+   const email=e=>e.type==='email'||e.autocomplete==='email'||/email|e-mail|邮箱|電郵|电邮/i.test(text(e));
+   const found={};let candidates=inputs.filter(textual);
+   if(rule.kind==='password'){
+     const passwords=inputs.filter(e=>e.type==='password');
+     if(passwords.length>1)return {code:'ambiguous'};
+     if(!passwords.length||passwords[0].autocomplete==='new-password')return {code:'waiting'};
+     found.password=passwords[0];
+     candidates=candidates.filter(e=>e.form===found.password.form);
+   }
+   for(const key of Object.keys(rule.fields).filter(k=>k!=='password')){
+     let matches=candidates.filter(e=>key==='email'?email(e):rule.kind==='application'?/app(?:lication)?[\s_-]*(?:no|num|number|id)|申请编号|申請編號/i.test(text(e)):e.autocomplete==='username'||/user|login|account|账号|帐号|用戶|用户/i.test(text(e))||email(e));
+     // An otherwise unlabelled account field is usable only beside one password.
+     if(!matches.length&&key==='account'&&rule.kind==='password')matches=candidates;
+     if(matches.length>1)return {code:'ambiguous'};
+     if(!matches.length)return {code:'waiting'};
+     found[key]=matches[0];
+   }
+   if(new Set(Object.values(found)).size!==Object.keys(found).length)return {code:'ambiguous'};
+   if(new Set(Object.values(found).map(e=>e.form)).size>1)return {code:'ambiguous'};
+   return {elements:found};
+ }
+ function locate(rule){if(rule.generic)return locateGeneric(rule);const found={};for(const [key,selector] of Object.entries(rule.fields)){const elements=[...document.querySelectorAll(selector)].filter(visible);if(elements.length>1)return {code:'ambiguous'};if(elements.length!==1)return {code:'waiting'};found[key]=elements[0];}return {elements:found};}
  function prepare(rule){
    if(rule.id==='hkust'&&!location.pathname.startsWith('/util/cgi-bin/login.cgi')){
      const links=[...document.querySelectorAll('a[href]')].filter(e=>visible(e)&&e.textContent.trim()==='Login to your application');

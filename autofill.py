@@ -30,13 +30,24 @@ def matches(url, origin, paths):
     try:
         p = urlsplit(url)
         actual = p.scheme + '://' + p.netloc
-        return actual == origin and not p.username and any(p.path == x or (x.endswith('/') and x != '/' and p.path.startswith(x)) for x in paths)
+        return actual == origin and not p.username and any(x == '/*' or p.path == x or (x.endswith('/') and x != '/' and p.path.startswith(x)) for x in paths)
     except ValueError:
         return False
 
 
 def rule_for(entry):
-    return next((r for r in rules() if r['kind'] == entry['kind'] and matches(entry['url'], r['origin'], r['paths'])), None)
+    known = next((r for r in rules() if r['kind'] == entry['kind'] and matches(entry['url'], r['origin'], r['paths'])), None)
+    if known:
+        return known
+    try:
+        url = urlsplit(entry['url'])
+        if url.scheme not in ('http', 'https') or not url.hostname or url.username:
+            return None
+        keys = {'password': ('account', 'password'), 'application': ('account', 'email'), 'email': ('email',)}[entry['kind']]
+        return dict(id='generic', generic=True, origin=url.scheme + '://' + url.netloc,
+                    paths=['/*'], loginPaths=['/*'], kind=entry['kind'], fields=dict.fromkeys(keys, ''))
+    except (ValueError, KeyError):
+        return None
 
 
 def chrome_path():
@@ -105,7 +116,7 @@ class Tasks:
     def create(self, entry):
         rule = rule_for(entry)
         if not rule:
-            raise ValueError('该网址或登录方式尚未适配，请使用“仅打开网站”和复制。')
+            raise ValueError('请先补充有效的网址和登录方式。')
         fields = {k: entry.get(k, '') for k in rule['fields']}
         if not all(fields.values()):
             raise ValueError('请先补充此条目的登录信息。')
@@ -138,7 +149,7 @@ class Tasks:
             if op == 'hello':
                 if self.connection_check and secrets.compare_digest(str(message.get('check', '')), self.connection_check):
                     self.connection_verified = True
-                return dict(ok=True,version='0.0.2')
+                return dict(ok=True,version='0.0.3')
             token = message.get('task')
             job = self.jobs.get(token)
             if not job or job['status'] in ('filled','failed','expired'):
@@ -150,7 +161,7 @@ class Tasks:
                 if job['binding'] is not None:
                     return dict(ok=False,error='任务已被领取，请重新点击助手。')
                 job.update(binding=binding,status='waiting',message='等待登录表单')
-                return dict(ok=True,url=job['url'],site=job['rule']['id'],ttl=120)
+                return dict(ok=True,url=job['url'],site=job['rule']['id'],rule=copy.deepcopy(job['rule']),ttl=120)
             if job['binding'] != binding:
                 return dict(ok=False,error='任务与当前标签页不匹配')
             if op == 'credentials':

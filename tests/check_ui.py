@@ -116,7 +116,9 @@ with sync_playwright() as p:
     first.locator('#save-button').click()
     first.wait_for_selector('.card')
     assert first.locator('#welcome').is_hidden()
-    assert first.locator('.open-button').inner_text().startswith('仅打开网站')
+    assert first.locator('.open-button').inner_text().startswith('打开并填入')
+    first.locator('.open-button').click()
+    assert first.evaluate('calls.at(-1)[0]')=='fill'
     first.locator('#settings-button').click()
     assert not first.locator('#startup-toggle').is_checked()
     assert first.locator('#chrome-download').is_visible()

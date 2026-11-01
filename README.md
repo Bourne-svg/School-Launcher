@@ -4,6 +4,8 @@ Windows 院校申请入口管理工具：自由编辑网址和账号资料、本
 
 **[下载 Windows x64 便携版 ZIP](https://github.com/Bourne-svg/School-Launcher/releases/download/v0.0.2/SchoolLauncher-v0.0.2-windows-x64.zip)** · [版本与校验文件](https://github.com/Bourne-svg/School-Launcher/releases/latest)
 
+当前源码版本：**v0.0.3（本地测试，尚未发布）**。上方下载链接仍为已发布的 v0.0.2。
+
 ## 开始使用
 
 1. 下载 ZIP，右键“全部解压”到可写入的固定目录。
@@ -18,7 +20,7 @@ Windows 院校申请入口管理工具：自由编辑网址和账号资料、本
 - 新增、编辑、删除、搜索院校和工具入口；支持账号密码、申请编号与邮箱、邮箱链接三种登录方式。
 - 资料使用当前 Windows 用户 DPAPI 加密，位于 `%LOCALAPPDATA%\SchoolLauncher`；发布包不含个人账号库。复制加密文件到其他用户或电脑通常无法解密。
 - 已适配：网易邮箱、香港理工大学、香港大学、香港中文大学、香港科技大学、南洋理工大学、点头算力云。
-- 其他网站可自由保存网址和资料，通过“仅打开网站”及复制使用；自动填入仅限既有适配规则。
+- 所有 HTTP/HTTPS 网址均显示“打开并填入”；内置规则优先，其他网址使用通用登录表单识别。找不到表单或匹配不唯一时提示失败，可使用“仅打开网站”及复制。
 - Chrome 扩展已包含在下载包中，首次需要手动启用开发者模式并加载。尚未上架 Chrome 商店，不会静默修改浏览器策略。
 - 不自动提交登录、不处理验证码或发送邮件；没有账号云同步或遥测。填入后网站可以读取表单数据。
 - 支持托盘、窗口置顶、可选自启动；关闭窗口收至托盘，可从托盘退出。
@@ -40,6 +42,6 @@ python tools/package_release.py --work-dir C:/SchoolLauncher-build --python pyth
 
 ## 连接与权限
 
-应用首次启动仅注册当前用户的 `HKCU\Software\Google\Chrome\NativeMessagingHosts\cn.schoollauncher.autofill`，无需管理员权限。扩展仅访问已适配站点，固定扩展 ID 与 Native Messaging 主机对应。凭据任务有效期 120 秒、只能领取一次，绑定标签页与来源；扩展不保存凭据。
+应用首次启动仅注册当前用户的 `HKCU\Software\Google\Chrome\NativeMessagingHosts\cn.schoollauncher.autofill`，无需管理员权限。扩展需要 HTTP/HTTPS 网站访问权限，但仅在用户发起的任务标签页中请求凭据；通用填入仅允许所填网址的同一来源及顶层页面，固定扩展 ID 与 Native Messaging 主机对应。凭据任务有效期 120 秒、只能领取一次，绑定标签页与来源；扩展不保存凭据。
 
 “清理本机连接”只移除指向当前程序的注册和快捷方式，保留账号数据。随后退出程序、从 Chrome 移除扩展、删除解压目录即可。再次运行程序会重新注册连接。

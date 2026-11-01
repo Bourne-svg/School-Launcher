@@ -77,11 +77,11 @@ def test_expiry_cancellation_and_multi_tab():
     assert tasks.status(d['task'])['status']=='failed'
 
 
-def test_unsupported_sites_kinds_and_missing_fields():
+def test_invalid_urls_kinds_and_missing_fields():
     tasks=Tasks()
-    value=entry();value['url']='https://example.edu'
+    value=entry();value['url']='file:///example'
     with pytest.raises(ValueError):tasks.create(value)
-    value=entry();value['kind']='password'
+    value=entry();value['kind']='invalid'
     with pytest.raises(ValueError):tasks.create(value)
     value=entry();value['email']=''
     with pytest.raises(ValueError):tasks.create(value)
@@ -100,3 +100,42 @@ def test_manifest_permissions():
     assert 'externally_connectable' not in manifest
     assert len(extension_id())==32
     assert manifest['manifest_version']==3
+
+
+@pytest.mark.parametrize('url', [
+    'https://sweb.hku.hk/tola/servlet/CreateUserScreen/loginForm',
+    'https://github.com/Bourne-svg/School-Launcher',
+    'http://localhost:8080/login',
+])
+@pytest.mark.parametrize('kind', ['password', 'application', 'email'])
+def test_generic_task_origin_binding(url, kind):
+    value = entry()
+    value.update(url=url, kind=kind)
+    tasks = Tasks()
+    token = tasks.create(value)
+    base = dict(task=token, client='test-client-123456789', tab=7)
+    claim = tasks.dispatch(dict(op='claim', **base))
+    assert claim['rule']['generic']
+    assert 'test-only' not in json.dumps(claim)
+    origin = claim['rule']['origin']
+    result = tasks.dispatch(dict(op='credentials', top=origin+'/login', frame=origin+'/login', frameId=0, **base))
+    assert result['ok']
+    assert set(result['fields']) == set(claim['rule']['fields'])
+
+
+@pytest.mark.parametrize('url,frame_id', [('https://evil.example/login', 0), ('https://example.edu/login', 1)])
+def test_generic_rejects_foreign_origin_and_iframe(url, frame_id):
+    value = entry()
+    value.update(url='https://example.edu/start', kind='password')
+    tasks = Tasks()
+    token = tasks.create(value)
+    base = dict(task=token, client='test-client-123456789', tab=7)
+    tasks.dispatch(dict(op='claim', **base))
+    result = tasks.dispatch(dict(op='credentials', top='https://example.edu/login', frame=url, frameId=frame_id, **base))
+    assert not result['ok'] and 'fields' not in result
+
+
+def test_generic_extension_permissions():
+    manifest = json.loads(Path('extension/manifest.json').read_text(encoding='utf-8'))
+    assert manifest['host_permissions'] == ['http://*/*', 'https://*/*']
+    assert manifest['content_scripts'][0]['matches'] == manifest['host_permissions']

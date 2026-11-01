@@ -203,7 +203,7 @@ class API:
             installed = False
         return dict(ok=True, connected=self._tasks.connection_verified,
                     profile=profile, profiles=profiles, chrome_installed=installed,
-                    extension_path=str(EXTENSION), version='0.0.2', error=error,
+                    extension_path=str(EXTENSION), version='0.0.3', error=error,
                     moved=self._integration.get('moved', False))
 
     def open_extension_setup(self):

@@ -31,7 +31,10 @@ def scenario(browser,rule,html,expected='filled',delay=0):
     assert page.evaluate('submits')==0
     if expected=='filled':
         for key,selector in rule['fields'].items():
-            assert page.locator(selector+':visible').input_value()==fields[key]
+            if rule.get('generic'):
+                assert fields[key] in page.locator('input:visible').evaluate_all('(es)=>es.map(e=>e.value)')
+            else:
+                assert page.locator(selector+':visible').input_value()==fields[key]
     if expected=='ambiguous':
         assert not page.evaluate('requests.some(r=>r.type==="credentials")')
     page.close()
@@ -46,5 +49,16 @@ with sync_playwright() as p:
     scenario(browser,hku,'<input id="appNo" value="already-typed"><input id="email">','conflict')
     scenario(browser,hku,'<input id="appNo"><input id="appNo"><input id="email">','ambiguous')
     scenario(browser,hku,'<input id="appNo" oninput="this.outerHTML=\'<input id=appNo>\'"><input id="email">','changed')
+    generic=dict(id='generic',generic=True,origin='https://example.edu',paths=['/*'],loginPaths=['/login'],kind='password',fields=dict(account='',password=''))
+    scenario(browser,generic,'<form><input name="username"><input type="password"></form>')
+    scenario(browser,generic,'<input placeholder="Username"><input type="password" placeholder="Password">',delay=500)
+    scenario(browser,generic,'<form><input type="email"><input type="password"></form><form><input type="search"></form>')
+    scenario(browser,generic,'<input name="username" value="already-typed"><input type="password">','conflict')
+    scenario(browser,generic,'<input name="username"><input name="email"><input type="password">','ambiguous')
+    scenario(browser,generic,'<input name="username"><input type="password"><input type="password">','ambiguous')
+    scenario(browser,generic,'<input type="search" placeholder="Search">','timeout')
+    scenario(browser,generic,'<input name="username"><input type="password" autocomplete="new-password">','timeout')
+    scenario(browser,dict(generic,kind='email',fields=dict(email='')),'<input type="email">')
+    scenario(browser,dict(generic,kind='application',fields=dict(account='',email='')),'<form><input id="application-number"><input type="email"></form>')
     browser.close()
-print('PASS: 7 adapters; delayed render; conflict and ambiguity refusal; rerender detection; no login submissions.')
+print('PASS: 7 adapters and generic forms (all 3 login kinds, missing forms, registration refusal); delayed render; conflict and ambiguity refusal; rerender detection; no login submissions.')
