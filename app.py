@@ -424,6 +424,18 @@ def main():
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 3 and sys.argv[1] == '--self-test':
+        # Import the actual renderer and exercise native dependencies without
+        # opening a window, accessing the vault, or registering the native host.
+        import webview.platforms.edgechromium
+        import win32crypt
+        sample = b'SchoolLauncher startup check'
+        encrypted = win32crypt.CryptProtectData(sample, '', None, None, None, 0)
+        assert win32crypt.CryptUnprotectData(encrypted, None, None, None, 0)[1] == sample
+        assert ctypes.CDLL('kernel32.dll')
+        assert (ASSETS / 'index.html').is_file()
+        Path(sys.argv[2]).write_text(json.dumps(dict(ok=True, version=Tasks().dispatch({'op': 'hello'})['version'])), encoding='utf-8')
+        sys.exit(0)
     try:
         main()
     except Exception:

@@ -34,4 +34,10 @@ def main():
 
 
 if __name__=='__main__':
+    if len(sys.argv) == 2 and sys.argv[1] == '--self-test':
+        import ctypes
+        from autofill import Tasks
+        assert ctypes.CDLL('kernel32.dll')
+        print(json.dumps(Tasks().dispatch({'op': 'hello'})))
+        sys.exit(0)
     main()

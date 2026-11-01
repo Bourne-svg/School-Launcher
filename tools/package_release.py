@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT_FILES = ('.gitignore', 'README.md', '使用说明.md', '验收记录.md',
               'requirements-lock.txt', 'build.ps1', 'app.py', 'autofill.py',
               'store.py', 'portable.py', 'native_bridge.py', 'native_host.py')
-TOOLS = ('prepare.py', 'package_release.py', 'audit_release.py')
+TOOLS = ('prepare.py', 'package_release.py', 'audit_release.py', 'check_frozen.py')
 VERSION = '0.0.3'
 
 
