@@ -108,16 +108,16 @@ def test_missing_components_and_download_prompt(tmp_path, monkeypatch):
         assert not app.API().get_connection_status()['chrome_installed']
 
 
-def test_extension_setup_copies_address_and_opens_selected_profile(tmp_path):
+def test_extension_page_address_copy_never_launches_browser(tmp_path):
     with patch.object(app, 'Vault', return_value=Vault(tmp_path)), patch.object(app, 'profile_directory', return_value='Profile 6'):
         api = app.API()
         api._data['settings']['chrome_profile'] = 'Profile 6'
         with patch.object(app, 'launch_chrome') as launch, patch.object(app.win32clipboard, 'OpenClipboard'), patch.object(app.win32clipboard, 'EmptyClipboard'), patch.object(app.win32clipboard, 'SetClipboardText') as copied, patch.object(app.win32clipboard, 'CloseClipboard') as closed:
-            result = api.open_extension_setup()
-            assert result['ok'] and 'Ctrl+L' in result['message']
-            launch.assert_called_once_with('about:blank', profile='Profile 6')
+            result = api.copy_extension_page_url()
+            assert result['ok'] and '自行打开 Chrome' in result['message']
+            launch.assert_not_called()
             copied.assert_called_once_with('chrome://extensions/', app.win32con.CF_UNICODETEXT)
             closed.assert_called_once()
         with patch.object(app, 'launch_chrome'), patch.object(app.win32clipboard, 'OpenClipboard', side_effect=RuntimeError):
-            result = api.open_extension_setup()
-            assert not result['ok'] and 'chrome://extensions/' in result['error']
+            result = api.copy_extension_page_url()
+            assert not result['ok'] and '手动选中' in result['error']

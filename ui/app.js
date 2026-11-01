@@ -65,7 +65,7 @@ $('#extension-folder').onclick=()=>call('open_extension_folder');
 $('#extension-copy').onclick=async()=>{if((await call('copy_extension_path')).ok)toast('扩展目录已复制');};
 $('#desktop-shortcut').onclick=async()=>{if((await call('create_desktop_shortcut')).ok)toast('桌面快捷方式已创建／更新');};
 $('#cleanup-integration').onclick=()=>confirmAction('清理本机连接？','仅移除指向当前程序的浏览器注册与快捷方式，保留账号数据。清理后请退出应用并删除解压目录；再次运行会重新注册。',async()=>{if((await call('cleanup_integration')).ok){toast('连接已清理，账号数据已保留');await updateConnection();}});
-$('#extension-setup').onclick=async()=>{const result=await call('open_extension_setup');if(result?.ok)toast(result.message);};
+$('#extension-setup').onclick=async()=>{const result=await call('copy_extension_page_url');$('#extension-setup-result').textContent=result?.ok?result.message:'请手动复制上方网址，粘贴到 Chrome 地址栏并回车。';};
 $('#extension-check').onclick=async()=>{await call('check_extension');setTimeout(updateConnection,2000);};
 $('#extension-path').onclick=e=>e.target.select();
 setInterval(async()=>{if(!ready||polling)return;polling=true;try{for(const [id,item] of fillTasks){if(item.done)continue;const result=await call('get_fill_status',item.task);item.message=result.message||result.error||'连接中断，请重试';item.done=!result.ok||['filled','failed','expired'].includes(result.status);const element=document.querySelector('[data-status="'+CSS.escape(id)+'"]');if(element){element.hidden=false;element.textContent=item.message;}}if($('#settings').open)await updateConnection();}finally{polling=false;}},1500);

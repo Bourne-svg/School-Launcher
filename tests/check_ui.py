@@ -20,7 +20,7 @@ copy_field:async(...a)=>{calls.push(['copy',...a]);return {ok:true}},
 start_autofill:async(...a)=>{calls.push(['fill',...a]);return {ok:true,task:'test-task'}},
 get_fill_status:async()=>({ok:true,status:'filled',message:'已填入，请确认登录'}),
 get_connection_status:async()=>({ok:true,connected:false,profile:testState.settings.chrome_profile||'Default',profiles:[{id:'Default',name:'默认'},{id:'Profile 2',name:'工作'}],chrome_installed:false,extension_path:'C:/test/extension'}),
-open_extension_setup:async()=>{calls.push(['setup']);return {ok:true,message:'已复制扩展页地址，请在 Chrome 中按 Ctrl+L、Ctrl+V，再按 Enter。'}},
+copy_extension_page_url:async()=>{calls.push(['setup']);return {ok:true,message:'已复制。请自行打开 Chrome，在地址栏粘贴并按 Enter。'}},
 check_extension:async()=>{calls.push(['check']);return {ok:true}},
 copy_extension_path:async()=>{calls.push(['path']);return {ok:true}},
 create_desktop_shortcut:async()=>{calls.push(['shortcut']);return {ok:true}},
@@ -124,9 +124,11 @@ with sync_playwright() as p:
     assert first.locator('#chrome-download').is_visible()
     first.locator('#profile-select').select_option('Profile 2')
     first.wait_for_function("testState.settings.chrome_profile==='Profile 2'")
+    assert first.locator('#extension-page-url').input_value()=='chrome://extensions/'
+    assert first.locator('#extension-setup').inner_text()=='复制扩展页地址'
     first.locator('#extension-setup').click()
     assert first.evaluate('calls.at(-1)[0]')=='setup'
-    first.wait_for_function("document.body.innerText.includes('已复制扩展页地址')")
+    first.wait_for_function("document.querySelector('#extension-setup-result').textContent.includes('自行打开 Chrome')")
     first.locator('#extension-copy').click()
     assert first.evaluate('calls.at(-1)[0]')=='path'
     first.locator('#extension-check').click()

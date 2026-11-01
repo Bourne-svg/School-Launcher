@@ -27,7 +27,7 @@ Windows 院校申请入口管理工具：自由编辑网址和账号资料、本
 
 ## 构建与测试
 
-使用 Windows x64、Python 3.11，安装 `requirements-lock.txt`，在干净源码目录执行 `./build.ps1 -Python python`。输出包含桌面程序及独立 Native Messaging 主机。`tools/package_release.py` 直接从当前源码仓库构建，只将编译产物写入构建目录，并生成 ZIP 与 SHA-256 文件。
+使用 Windows x64、Python 3.11，安装 `requirements-lock.txt`，在干净源码目录执行 `./build.ps1 -Python python`。输出包含桌面程序及独立 Native Messaging 主机。`tools/package_release.py` 生成便携 ZIP 与 SHA-256 校验文件。
 
 ```powershell
 python -m pytest tests/test_core.py tests/test_autofill.py tests/test_portable.py -q

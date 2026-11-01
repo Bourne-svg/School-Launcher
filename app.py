@@ -206,13 +206,7 @@ class API:
                     extension_path=str(EXTENSION), version='0.0.4', error=error,
                     moved=self._integration.get('moved', False))
 
-    def open_extension_setup(self):
-        try:
-            # Chrome filters internal chrome:// URLs passed on its command line.
-            # Open the chosen profile and let the user navigate via the omnibox.
-            self._launch('about:blank')
-        except Exception:
-            return dict(ok=False, error='无法打开 Chrome，请安装 Chrome 并选择有效的配置。')
+    def copy_extension_page_url(self):
         try:
             win32clipboard.OpenClipboard()
             try:
@@ -220,9 +214,9 @@ class API:
                 win32clipboard.SetClipboardText('chrome://extensions/', win32con.CF_UNICODETEXT)
             finally:
                 win32clipboard.CloseClipboard()
-            return dict(ok=True, message='已复制扩展页地址，请在 Chrome 中按 Ctrl+L、Ctrl+V，再按 Enter。')
+            return dict(ok=True, message='已复制。请自行打开 Chrome，在地址栏粘贴并按 Enter。')
         except Exception:
-            return dict(ok=False, error='Chrome 已打开，但复制地址失败。请在地址栏输入 chrome://extensions/ 并回车。')
+            return dict(ok=False, error='复制失败，请手动选中上方网址，复制到 Chrome 地址栏并回车。')
 
     def check_extension(self):
         try:
