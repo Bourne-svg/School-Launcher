@@ -2,9 +2,9 @@
 
 Windows 院校申请入口管理工具：自由编辑网址和账号资料、本地加密保存、Chrome 辅助填入。
 
-**[下载 Windows x64 便携版 ZIP](https://github.com/Bourne-svg/School-Launcher/releases/download/v0.0.2/SchoolLauncher-v0.0.2-windows-x64.zip)** · [版本与校验文件](https://github.com/Bourne-svg/School-Launcher/releases/latest)
+**[下载 Windows x64 便携版 ZIP](https://github.com/Bourne-svg/School-Launcher/releases/download/v0.0.3/SchoolLauncher-0.0.3.zip)** · [版本与校验文件](https://github.com/Bourne-svg/School-Launcher/releases/latest)
 
-当前源码版本：**v0.0.3（本地测试，尚未发布）**。上方下载链接仍为已发布的 v0.0.2。
+当前版本：**0.0.3**。
 
 ## 开始使用
 
@@ -35,7 +35,7 @@ python tests/check_content.py
 node tests/test_worker.mjs
 python tests/check_ui.py
 python tests/check_native.py
-python tools/package_release.py --work-dir C:/SchoolLauncher-build --python python
+python tools/package_release.py --work-dir C:/SchoolLauncher-build --output-dir C:/SchoolLauncher/0.0.3 --python python
 ```
 
 测试使用虚构凭据；本机原生 UI 测试会显示独立测试窗口，不连接正式账号库。测试证据及未验证范围见 [验收记录](验收记录.md)。
