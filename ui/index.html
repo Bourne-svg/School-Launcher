@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>院校登录助手</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark" aria-hidden="true">申</div><div><strong>申请书架</strong><span>院校登录助手</span></div></div>
+      <div class="nav-label">我的入口</div>
+      <nav aria-label="分类筛选">
+        <button class="nav-item active" data-filter="全部"><span class="nav-icon">▦</span>全部条目<span id="count-all" class="count">0</span></button>
+        <button class="nav-item" data-filter="院校"><span class="nav-icon">⌂</span>申请院校<span id="count-schools" class="count">0</span></button>
+        <button class="nav-item" data-filter="工具"><span class="nav-icon">◇</span>邮箱与工具<span id="count-tools" class="count">0</span></button>
+        <button class="nav-item" data-filter="待补充"><span class="nav-icon">○</span>待补充<span id="count-pending" class="count">0</span></button>
+      </nav>
+      <div class="sidebar-bottom"><div class="local-status"><i></i>资料保存在这台电脑</div><p>从一个入口，<br>走向下一站。</p><button id="settings-button" class="settings-button">⚙ <span>应用设置</span></button></div>
+    </aside>
+    <main>
+      <header class="page-header"><div><div class="eyebrow">你的申请，一目了然</div><h1 id="page-title">全部条目</h1><p id="summary">正在读取本机资料…</p></div><button id="add-button" class="primary">＋ 新增条目</button></header>
+      <div class="toolbar"><label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="search" type="search" placeholder="搜索院校、网址或备注" autocomplete="off" aria-label="搜索条目"><kbd>Ctrl K</kbd></label><button id="hide-button" class="secondary" aria-pressed="false">隐藏凭据</button></div>
+      <section id="error-panel" class="empty-state" hidden><h2>资料暂时无法读取</h2><p id="error-message"></p><button id="restore-button" class="primary">恢复上一份备份</button></section>
+      <section id="welcome" class="settings-note" hidden><h2>欢迎使用申请书架</h2><p>从自己的第一个申请入口开始。填写网址、账号和密码后点击保存，资料仅加密保存在当前 Windows 用户下。</p><div class="extension-actions"><button id="welcome-add" class="primary">添加第一个申请入口</button><button id="welcome-extension" class="secondary">配置 Chrome 扩展</button></div><p>自动填入需要首次手动加载随包扩展；你也可以先保存资料、打开网站和复制。</p></section>
+      <section id="cards" class="cards" aria-label="登录条目"></section>
+      <section id="empty" class="empty-state" hidden><div class="empty-icon">⌕</div><h2>没有找到条目</h2><p>换个关键词，或新增一个申请入口。</p></section>
+      <footer><span>打开网址 · 复制资料 · 继续申请</span><span id="visible-count"></span></footer>
+    </main>
+  </div>
+  <dialog id="editor"><form id="entry-form"><div class="dialog-heading"><div><div class="eyebrow">整理你的申请入口</div><h2 id="editor-title">新增条目</h2></div><button type="button" class="icon-button close-dialog" aria-label="关闭编辑">×</button></div>
+    <input type="hidden" name="id">
+    <div class="form-grid"><label class="wide">名称<input name="name" required maxlength="100" placeholder="例如：香港城市大学"></label>
+    <label>分类<select name="category"><option>院校</option><option>工具</option></select></label>
+    <label>登录方式<select name="kind"><option value="password">账号与密码</option><option value="application">申请编号与邮箱</option><option value="email">邮箱登录链接</option></select></label>
+    <label class="wide">网址<input name="url" type="url" placeholder="https://（可稍后补充）"></label>
+    <label id="account-label" class="wide"><span>账号</span><input name="account" autocomplete="off" spellcheck="false"></label>
+    <label id="password-label" class="wide"><span>密码</span><div class="password-input"><input name="password" type="text" autocomplete="off" spellcheck="false"><button id="password-toggle" type="button" class="icon-button" aria-label="隐藏编辑密码">◉</button></div></label>
+    <label id="email-label" class="wide" hidden>邮箱<input name="email" type="email" autocomplete="off" spellcheck="false"></label>
+    <label class="wide">备注<textarea name="note" rows="2" placeholder="登录步骤、申请提醒…"></textarea></label></div>
+    <p id="form-error" class="form-error" role="alert"></p><div class="dialog-actions"><button id="delete-button" type="button" class="danger-text">删除条目</button><span class="spacer"></span><button type="button" class="secondary close-dialog">取消</button><button id="save-button" class="primary" type="submit">保存条目</button></div>
+  </form></dialog>
+  <dialog id="settings"><div class="dialog-heading"><div><div class="eyebrow">让助手更顺手</div><h2>应用设置</h2></div><button class="icon-button close-dialog" aria-label="关闭设置">×</button></div>
+    <div class="extension-settings"><strong>Chrome 自动填入 <small>V0.0.2</small></strong><p id="extension-status">正在检查连接…</p><p>首次使用：打开 Chrome 扩展页，开启“开发者模式”，选择“加载已解压的扩展程序”，选择下面的文件夹。请在所选 Chrome 配置中完成加载；移动程序目录后，需要移除旧扩展并重新加载新目录。</p><input id="extension-path" aria-label="扩展文件夹" readonly><p id="chrome-profile"></p><label for="profile-select">使用的 Chrome 配置</label><select id="profile-select"></select><p id="integration-note"></p><button id="chrome-download" class="secondary" hidden>安装 Google Chrome</button><div class="extension-actions"><button id="extension-setup" class="secondary">打开扩展页</button><button id="extension-copy" class="secondary">复制扩展目录</button><button id="extension-folder" class="secondary">打开文件夹</button><button id="extension-check" class="secondary">验证连接</button></div></div>
+    <div class="settings-note"><strong>桌面入口与便携目录</strong><p>请保留完整解压目录，不要单独移动 EXE。移动目录后，请重新创建快捷方式并加载扩展。</p><div class="extension-actions"><button id="desktop-shortcut" class="secondary">创建／更新桌面快捷方式</button><button id="cleanup-integration" class="secondary">清理本机连接</button></div></div>
+    <label class="setting-row"><span><strong>登录 Windows 后自动启动</strong><small>登录桌面时显示助手，无需打开其他应用。</small></span><input id="startup-toggle" type="checkbox" role="switch"></label>
+    <label class="setting-row"><span><strong>窗口置顶</strong><small>复制资料时，让助手保持在其他窗口前面。</small></span><input id="top-toggle" type="checkbox" role="switch"></label>
+    <div class="settings-note"><strong>只在本机保存</strong><p>资料使用当前 Windows 用户加密。关闭窗口后，助手留在系统托盘；点击托盘图标即可找回。</p><p>如需彻底关闭，请选择下方“退出应用”。</p></div>
+    <div class="dialog-actions"><button id="quit-button" class="secondary">退出应用</button><span class="spacer"></span><button class="primary close-dialog">完成</button></div>
+  </dialog>
+  <dialog id="confirm"><h2 id="confirm-title"></h2><p id="confirm-message"></p><div class="dialog-actions"><span class="spacer"></span><button id="confirm-no" class="secondary">取消</button><button id="confirm-yes" class="primary">确认</button></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body></html>

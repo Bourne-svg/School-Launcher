@@ -1,0 +1,9 @@
+[
+ {"id":"polyu","origin":"https://www38.polyu.edu.hk","paths":["/eAdmission/"],"loginPaths":["/eAdmission/"],"kind":"password","fields":{"account":"input#username","password":"input[name=password]"}},
+ {"id":"hku","origin":"https://tpgadmission.engg.hku.hk","paths":["/"],"loginPaths":["/"],"kind":"application","fields":{"account":"input#appNo","email":"input#email"}},
+ {"id":"cuhk","origin":"https://www.gradsch.cuhk.edu.hk","paths":["/OnlineApp/login_email.aspx"],"loginPaths":["/OnlineApp/login_email.aspx"],"kind":"password","fields":{"account":"input#txt_email","password":"input#txt_pwd"}},
+ {"id":"hkust","origin":"https://w5.ab.ust.hk","paths":["/cgi-bin/","/util/cgi-bin/login.cgi"],"loginPaths":["/util/cgi-bin/login.cgi"],"kind":"password","fields":{"account":"input#username","password":"input#password"}},
+ {"id":"ntu","origin":"https://apps.ntu.edu.sg","paths":["/COAL/"],"loginPaths":["/COAL/"],"kind":"email","fields":{"email":"input#EmailInput"}},
+ {"id":"netease","origin":"https://mail.163.com","paths":["/"],"loginPaths":["/"],"frameOrigin":"https://dl.reg.163.com","framePaths":["/webzj/"],"kind":"password","fields":{"account":"input[name=email]","password":"input[name=password]"}},
+ {"id":"diantou","origin":"https://gpu-center.diantoueducredit.cloud","paths":["/"],"loginPaths":["/"],"kind":"password","fields":{"account":"input[placeholder=账号]","password":"input[placeholder=密码]"}}
+]

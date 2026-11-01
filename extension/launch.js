@@ -1,0 +1,2 @@
+'use strict';
+(async()=>{const params=new URLSearchParams(location.hash.slice(1)),task=params.get('task'),check=params.get('check');history.replaceState(null,'',location.pathname);try{const result=await chrome.runtime.sendMessage({type:task?'launch':'hello',task,check});document.querySelector('h1').textContent=result.ok?(task?'正在前往网站':'Chrome 已连接'):'暂时无法连接';document.querySelector('#message').textContent=result.ok?(task?'等待登录表单出现…':'回到院校登录助手，点击“打开并填入”即可。'):(result.error||'请重新打开桌面助手。');}catch{document.querySelector('#message').textContent='连接失败，请重新加载扩展后重试。';}})();

@@ -1,0 +1,14 @@
+__pycache__/
+.pytest_cache/
+build/
+dist/
+artifacts/
+*.dat
+*.tmp
+*.lnk
+*.log
+*.dmp
+*.pem
+*.key
+chrome-profile*/
+test-results/
