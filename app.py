@@ -208,10 +208,21 @@ class API:
 
     def open_extension_setup(self):
         try:
-            self._launch('chrome://extensions/')
-            return dict(ok=True)
+            # Chrome filters internal chrome:// URLs passed on its command line.
+            # Open the chosen profile and let the user navigate via the omnibox.
+            self._launch('about:blank')
         except Exception:
             return dict(ok=False, error='无法打开 Chrome，请安装 Chrome 并选择有效的配置。')
+        try:
+            win32clipboard.OpenClipboard()
+            try:
+                win32clipboard.EmptyClipboard()
+                win32clipboard.SetClipboardText('chrome://extensions/', win32con.CF_UNICODETEXT)
+            finally:
+                win32clipboard.CloseClipboard()
+            return dict(ok=True, message='已复制扩展页地址，请在 Chrome 中按 Ctrl+L、Ctrl+V，再按 Enter。')
+        except Exception:
+            return dict(ok=False, error='Chrome 已打开，但复制地址失败。请在地址栏输入 chrome://extensions/ 并回车。')
 
     def check_extension(self):
         try:
